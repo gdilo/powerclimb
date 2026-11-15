@@ -148,7 +148,7 @@ Después, en la Karoo:
 3. Busca `PowerClimb` y elige una de las dos variantes.
 4. Ajusta el tamaño del campo. El diseño se adapta a 1x1, 1x2, 2x1 y 2x2.
 
-No hay app de ajustes: la variante se elige en el selector de campos de datos de la Karoo.
+No hay app de ajustes: la variante se elige en el selector de campos de datos de la Karoo. Al abrir PowerClimb aparece un resumen de los dos campos y de cómo añadirlos al perfil. Esta pantalla informativa está disponible en español e inglés y no contiene ajustes. La entrada reutiliza una única tarea para evitar que abrir la app varias veces acumule pantallas idénticas. La flecha compacta de regreso se superpone abajo a la izquierda, sin reservar una franja fija ni reducir la altura del contenido. Solo hay margen al final del scroll para poder leer el último texto por encima de la flecha. Envía los eventos Android `KEYCODE_BACK` de pulsación y liberación, por la misma ruta que el botón físico; no llama a `finish()` directamente. Es un control de la app con aspecto Karoo, no un componente provisto por el firmware. La entrada de launcher también permite que Karoo muestre la app en su listado.
 
 Para generar un APK release firmado localmente:
 

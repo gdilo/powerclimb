@@ -30,6 +30,71 @@ class KarooManifestTest(unittest.TestCase):
         )
         self.assertEqual(service.find("meta-data").get(ANDROID + "resource"), "@xml/extension_info")
 
+    def test_launcher_activity_is_registered(self):
+        app = ET.parse(ROOT / "app/src/main/AndroidManifest.xml").getroot().find("application")
+        activity = app.find("activity[@" + ANDROID + "name='.LauncherActivity']")
+        self.assertIsNotNone(activity)
+        self.assertEqual(activity.get(ANDROID + "exported"), "true")
+        intent = activity.find("intent-filter")
+        self.assertEqual(intent.find("action").get(ANDROID + "name"), "android.intent.action.MAIN")
+        self.assertEqual(intent.find("category").get(ANDROID + "name"), "android.intent.category.LAUNCHER")
+
+    def test_launcher_reuses_single_task_when_reopened(self):
+        app = ET.parse(ROOT / "app/src/main/AndroidManifest.xml").getroot().find("application")
+        activity = app.find("activity[@" + ANDROID + "name='.LauncherActivity']")
+        self.assertEqual(activity.get(ANDROID + "launchMode"), "singleTask")
+
+    def test_launcher_summary_is_visible_localized_and_scrollable(self):
+        app = ET.parse(ROOT / "app/src/main/AndroidManifest.xml").getroot().find("application")
+        activity = app.find("activity[@" + ANDROID + "name='.LauncherActivity']")
+        self.assertEqual(activity.get(ANDROID + "theme"), "@style/Theme.PowerClimb")
+        layout = ET.parse(ROOT / "app/src/main/res/layout/launcher_summary.xml").getroot()
+        scroll = layout if layout.tag == "ScrollView" else layout.find("ScrollView")
+        self.assertIsNotNone(scroll)
+        self.assertEqual(scroll.get(ANDROID + "fillViewport"), "true")
+        text_refs = {node.get(ANDROID + "text") for node in layout.iter("TextView")}
+        expected = {"app_name", "about_summary", "about_fields", "about_usage", "about_notes"}
+        self.assertEqual(text_refs, {"@string/" + name for name in expected})
+        for locale in ("values", "values-es"):
+            with self.subTest(locale=locale):
+                strings = ET.parse(ROOT / "app/src/main/res" / locale / "strings.xml").getroot()
+                values = {node.get("name"): node.text for node in strings.findall("string")}
+                for name in expected:
+                    self.assertTrue(values.get(name))
+                self.assertIn(values["datatype_name_numeric"], values["about_fields"])
+                self.assertIn(values["datatype_name_zone"], values["about_fields"])
+
+    def test_visual_back_is_compact_accessible_and_outside_content(self):
+        layout = ET.parse(ROOT / "app/src/main/res/layout/launcher_summary.xml").getroot()
+        self.assertEqual([node.tag for node in layout], ["ScrollView", "ImageButton"])
+        scroll, button = list(layout)
+        self.assertEqual(button.get(ANDROID + "id"), "@+id/button_back")
+        self.assertEqual(button.get(ANDROID + "layout_width"), "54dp")
+        self.assertEqual(button.get(ANDROID + "layout_height"), "54dp")
+        self.assertEqual(button.get(ANDROID + "enabled"), "true")
+        self.assertEqual(button.get(ANDROID + "contentDescription"), "@string/about_back")
+        self.assertEqual(button.get(ANDROID + "src"), "@drawable/ic_back")
+        self.assertEqual(button.get(ANDROID + "background"), "@drawable/back_navigation_background")
+        self.assertFalse(list(layout.iter("Button")))
+        for locale, expected in (("values", "Back"), ("values-es", "Volver")):
+            strings = ET.parse(ROOT / "app/src/main/res" / locale / "strings.xml").getroot()
+            values = {node.get("name"): node.text for node in strings.findall("string")}
+            self.assertEqual(values.get("about_back"), expected)
+
+    def test_back_overlays_full_height_scroll_without_reserved_row(self):
+        layout = ET.parse(ROOT / "app/src/main/res/layout/launcher_summary.xml").getroot()
+        self.assertEqual(layout.tag, "FrameLayout")
+        scroll, button = list(layout)
+        self.assertEqual(scroll.get(ANDROID + "layout_width"), "match_parent")
+        self.assertEqual(scroll.get(ANDROID + "layout_height"), "match_parent")
+        self.assertIsNone(scroll.get(ANDROID + "layout_weight"))
+        self.assertEqual(button.get(ANDROID + "layout_gravity"), "bottom|start")
+        content = scroll.find("LinearLayout")
+        self.assertEqual(content.get(ANDROID + "paddingBottom"), "70dp")
+        self.assertIsNone(content.get(ANDROID + "padding"))
+        for edge in ("Start", "Top", "End"):
+            self.assertEqual(content.get(ANDROID + "padding" + edge), "20dp")
+
     def test_generation_uses_built_apk_identity_and_version(self):
         with tempfile.TemporaryDirectory() as directory:
             metadata = Path(directory) / "output-metadata.json"

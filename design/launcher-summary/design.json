@@ -1,0 +1,14 @@
+{
+  "title": "PowerClimb launcher summary",
+  "brief": "One symbolic native information screen for the existing launcher: explain the two climb-power fields and where to add them, without settings or new behavior.",
+  "feature": "odd/tasks/karoo-extension-listing.md",
+  "artboards": [
+    {
+      "file": "01-native-summary.html",
+      "title": "Native summary",
+      "tradeoff": "Back floats over the full-height summary without a fixed bottom strip. End-of-scroll padding keeps the final lines readable; the native Back key-event pattern is unchanged.",
+      "width": 256,
+      "height": 427
+    }
+  ]
+}
