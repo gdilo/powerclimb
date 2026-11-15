@@ -18,7 +18,7 @@ Cada push a `main` que toque código de la app (`app/**`, `ci/**`, Gradle o el w
 Comparte con Karoo desde Companion la URL del manifiesto de aplicación:
 
 ```text
-https://github.com/Danybs/powerclimb/releases/latest/download/manifest.json
+https://github.com/gdilo/powerclimb/releases/latest/download/manifest.json
 ```
 
 El APK declara esa misma URL en `io.hammerhead.karooext.MANIFEST_URL`. El JSON contiene el nombre, paquete, versión y enlace al APK; es distinto de `extension_info.xml`, que describe los campos de datos. Esta integración sigue el [ejemplo oficial del SDK](https://github.com/hammerheadnav/karoo-ext/blob/1.1.9/app/src/main/AndroidManifest.xml).
@@ -43,7 +43,7 @@ adb uninstall com.powerclimb
 La URL directa al último APK es:
 
 ```text
-https://github.com/Danybs/powerclimb/releases/latest/download/powerclimb.apk
+https://github.com/gdilo/powerclimb/releases/latest/download/powerclimb.apk
 ```
 
 El versionado es automático: cada release parte del último tag `vX.Y.Z` y sube el patch (`v0.3.0` → `v0.3.1` → `v0.3.2`…). El `versionCode` del APK se calcula como `major * 10000 + minor * 100 + patch`, así que siempre crece y el sideload actualiza bien sin desinstalar. No hace falta tocar `app/build.gradle.kts` para publicar; para un cambio de minor o major, crea el tag a mano (`git tag v0.4.0 && git push origin v0.4.0`) antes del siguiente push.

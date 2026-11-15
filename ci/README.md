@@ -32,7 +32,7 @@ version). The APK URL is pinned to the same version's release:
 ```bash
 python3 ci/generate_manifest.py \
   app/build/outputs/apk/release/output-metadata.json \
-  Danybs/powerclimb manifest.json
+  gdilo/powerclimb manifest.json
 ```
 
 The generator expects one APK output, matching the current unsplit release

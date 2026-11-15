@@ -11,7 +11,7 @@ import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parents[1]
 ANDROID = "{http://schemas.android.com/apk/res/android}"
-MANIFEST_URL = "https://github.com/Danybs/powerclimb/releases/latest/download/manifest.json"
+MANIFEST_URL = "https://github.com/gdilo/powerclimb/releases/latest/download/manifest.json"
 
 
 class KarooManifestTest(unittest.TestCase):
