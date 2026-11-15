@@ -11,7 +11,21 @@ En ambos modos el icono va a la izquierda y la etiqueta a la derecha del campo. 
 
 ## Instalar desde Releases
 
-Cada push a `main` que toque código de la app (`app/**`, Gradle o el workflow de release) compila, firma y publica `powerclimb.apk` en [Releases](../../releases/latest). Los cambios solo de documentación no generan release.
+Cada push a `main` que toque código de la app (`app/**`, `ci/**`, Gradle o el workflow de release) compila, firma y publica `powerclimb.apk` y `manifest.json` en [Releases](../../releases/latest). Los cambios solo de documentación fuera de esas rutas no generan release.
+
+### Desde Companion
+
+Comparte con Karoo desde Companion la URL del manifiesto de aplicación:
+
+```text
+https://github.com/gdilo/powerclimb/releases/latest/download/manifest.json
+```
+
+El APK declara esa misma URL en `io.hammerhead.karooext.MANIFEST_URL`. El JSON contiene el nombre, paquete, versión y enlace al APK; es distinto de `extension_info.xml`, que describe los campos de datos. Esta integración sigue el [ejemplo oficial del SDK](https://github.com/hammerheadnav/karoo-ext/blob/1.1.9/app/src/main/AndroidManifest.xml).
+
+Después de instalar, comprueba que desaparece `Installing`, PowerClimb aparece en el listado de extensiones instaladas y ofrece desinstalación. Comprueba también que siguen disponibles los dos campos. Que aparezca `INSTALL_SUCCEEDED` o funcionen los campos no demuestra por sí solo que Karoo haya completado el registro en su interfaz. La corrección de ese comportamiento requiere validación en el dispositivo.
+
+### Por USB/ADB
 
 1. Descarga [powerclimb.apk](../../releases/latest/download/powerclimb.apk) desde la última release.
 2. Sideload a la Karoo por USB/ADB:
@@ -29,7 +43,7 @@ adb uninstall com.powerclimb
 La URL directa al último APK es:
 
 ```text
-https://github.com/<usuario>/<repo>/releases/latest/download/powerclimb.apk
+https://github.com/gdilo/powerclimb/releases/latest/download/powerclimb.apk
 ```
 
 El versionado es automático: cada release parte del último tag `vX.Y.Z` y sube el patch (`v0.3.0` → `v0.3.1` → `v0.3.2`…). El `versionCode` del APK se calcula como `major * 10000 + minor * 100 + patch`, así que siempre crece y el sideload actualiza bien sin desinstalar. No hace falta tocar `app/build.gradle.kts` para publicar; para un cambio de minor o major, crea el tag a mano (`git tag v0.4.0 && git push origin v0.4.0`) antes del siguiente push.

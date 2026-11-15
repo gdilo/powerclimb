@@ -9,6 +9,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PowerClimb">
 
+        <meta-data
+            android:name="io.hammerhead.karooext.MANIFEST_URL"
+            android:value="https://github.com/gdilo/powerclimb/releases/latest/download/manifest.json" />
+
         <service
             android:name=".PowerClimbExtension"
             android:exported="true"
